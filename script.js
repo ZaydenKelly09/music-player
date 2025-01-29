@@ -207,5 +207,12 @@ function handleSearch() {
     });
 
     const noResultsMessage = document.getElementById("no-results-message");
-    noResultsMessage.style.display = found ? "none" : "block";
+
+    // Ensure "No results" message is displayed when no matches found
+    if (found) {
+        noResultsMessage.style.display = "none";
+    } else {
+        noResultsMessage.style.display = "block";
+    }
 }
+
