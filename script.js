@@ -28,8 +28,8 @@ themeToggleButton.addEventListener("click", () => {
         document.body.classList.remove("light-mode");
     }
     const icon = themeToggleButton.querySelector("i");
-    icon.classList.toggle("fa-moon");
     icon.classList.toggle("fa-sun");
+    icon.classList.toggle("fa-moon");
 });
 
 // Handle song file selection and playlist display
