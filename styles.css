@@ -23,7 +23,7 @@ body.dark-mode {
     left: 20px;
     z-index: 10;
     background-color: #007BFF;
-    color: 444;
+    color: #444;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
