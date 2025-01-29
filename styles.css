@@ -68,7 +68,7 @@ body.light-mode #player-container {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
-    background-color: #007BFF;
+    background-color: #000000;
     color: white;
     padding: 12px 25px;
     border-radius: 5px;
