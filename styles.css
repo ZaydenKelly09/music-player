@@ -23,7 +23,7 @@ body.dark-mode {
     left: 20px;
     z-index: 10;
     background-color: #007BFF;
-    color: white;
+    color: 444;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -43,7 +43,7 @@ body.dark-mode #mode-switcher {
 /* Light Mode Switcher Background */
 body.light-mode #mode-switcher {
     background-color: #444;
-    color: #333;
+    color: #f1f1f1;
 }
 
 /* Player Container */
