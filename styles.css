@@ -1,0 +1,332 @@
+/* Default Light Mode */
+body {
+    font-family: 'Knewave', sans-serif;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(to right, rgb(132, 132, 255), rgb(255, 113, 255));
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background: linear-gradient(to right, rgb(0, 0, 50), rgb(50, 0, 50));
+    color: white;
+}
+
+/* Position the Dark/Light Mode Switcher */
+#mode-switcher {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+#mode-switcher:hover {
+    background-color: #0056b3;
+}
+
+/* Dark Mode Switcher Background */
+body.dark-mode #mode-switcher {
+    background-color: #444;
+}
+
+/* Light Mode Switcher Background */
+body.light-mode #mode-switcher {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+/* Player Container */
+#player-container {
+    text-align: center;
+    width: 90%;
+    max-width: 1200px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin: 0 auto;
+    background-color: rgb(49, 49, 49); /* Dark background */
+}
+
+body.light-mode #player-container {
+    background-color: white;
+    color: #333; /* Light mode text */
+}
+
+/* File Label */
+.file-label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+/* Light Mode File Label */
+body.light-mode .file-label {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+body.light-mode .file-label i {
+    color: #333;
+}
+
+.file-label:hover {
+    background-color: #0056b3;
+}
+
+/* Playlist Styling */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+li {
+    background-color: #fff;
+    margin: 5px;
+    padding: 12px;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    width: 30%;
+    max-width: 250px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+li:hover {
+    background-color: #6a0dad;
+}
+
+/* Highlight playing song */
+li.playing {
+    background-color: #b03ffc;
+    color: white;
+}
+
+/* Dark Mode Styles for Playlist Items */
+body.dark-mode li {
+    background-color: #444;
+    color: white;
+}
+
+body.dark-mode li.playing {
+    background-color: #ff00ff;
+}
+
+/* Controls Styling */
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+button {
+    width: 60px;
+    height: 60px;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 10px;
+    outline: none;
+}
+
+button.active {
+    background-color: #a95eff;
+    box-shadow: 0 0 10px #a95eff;
+}
+
+button:not(.active) {
+    background-color: #007BFF;
+    box-shadow: none;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Dark Mode for Buttons */
+body.dark-mode button {
+    background-color: #444;
+    color: white;
+}
+
+body.dark-mode button:hover {
+    background-color: #666;
+}
+
+/* Progress Bar */
+#progress-bar {
+    width: 100%;
+    height: 5px;
+    background-color: #ccc;
+    border-radius: 3px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+#progress-bar-filled {
+    height: 100%;
+    background-color: #FF9800;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s;
+}
+
+/* Search Bar */
+#search-bar {
+    width: 80%;
+    max-width: 500px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    color: white;
+    font-size: 16px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#search-bar::placeholder {
+    color: #bbb;
+}
+
+#search-bar:focus {
+    outline: none;
+    background-color: #444;
+    border-color: #007BFF;
+}
+
+/* Dark Mode Styles for Search Bar */
+body.dark-mode #search-bar {
+    background-color: #444;
+    border-color: #555;
+}
+
+body.light-mode #search-bar {
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+/* Text below Progress Bar */
+#current-time, #duration-time {
+    color: inherit; /* This ensures text follows the body color */
+}
+
+body.dark-mode #current-time,
+body.dark-mode #duration-time {
+    color: #e0e0e0; /* Light text in dark mode */
+}
+
+body.light-mode #current-time,
+body.light-mode #duration-time {
+    color: #333; /* Dark text in light mode */
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+    #player-container {
+        width: 80%;
+        padding: 15px;
+        max-height: 600px;
+    }
+
+    .file-label, button {
+        padding: 4px 9px;
+        font-size: 15px;
+    }
+
+    #controls {
+        flex-direction: row;
+        margin-top: 20px;
+    }
+
+    button {
+        width: 43px;
+        height: 43px;
+        font-size: 18px;
+        padding: 5px;
+    }
+
+    button i {
+        font-size: 27px;
+    }
+
+    #progress-bar {
+        height: 4px;
+    }
+
+    ul {
+        padding-left: 0;
+        margin: 0;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+    }
+
+    li {
+        display: block;
+        width: 90%;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+}
+
+/* Active button states */
+button.active {
+    background-color: #a95eff;
+    box-shadow: 0 0 10px #a95eff;
+}
+
+button:not(.active) {
+    background-color: #007BFF;
+    box-shadow: none;
+}
+
+button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
+}
+
+* {
+    transition: all 0.3s ease;
+}
