@@ -21,17 +21,12 @@ let currentPlayingItem = null;
 
 // Dark/Light mode toggle functionality
 themeToggleButton.addEventListener("click", () => {
-    // Toggle dark mode class
     document.body.classList.toggle("dark-mode");
-
-    // Toggle light mode class (you can remove if you only want to keep dark-mode)
     if (!document.body.classList.contains("dark-mode")) {
         document.body.classList.add("light-mode");
     } else {
         document.body.classList.remove("light-mode");
     }
-
-    // Toggle theme icon
     const icon = themeToggleButton.querySelector("i");
     icon.classList.toggle("fa-moon");
     icon.classList.toggle("fa-sun");
@@ -103,9 +98,9 @@ function togglePlayPause() {
 
 function skipSong() {
     if (isShuffleEnabled) {
-        currentSongIndex = Math.floor(Math.random() * songs.length);
+        currentSongIndex = Math.floor(Math.random() * songs.length); // Random index for shuffle
     } else {
-        currentSongIndex = (currentSongIndex + 1) % songs.length;
+        currentSongIndex = (currentSongIndex + 1) % songs.length; // Normal skip
     }
     playSong();
 }
@@ -123,7 +118,6 @@ function toggleShuffle() {
         isRepeatEnabled = false;
         loopButton.classList.remove("active");
         audio.loop = false;
-        shuffleSongs();
     }
 }
 
@@ -136,13 +130,6 @@ function toggleLoop() {
         shuffleButton.classList.remove("active");
     }
     audio.loop = isRepeatEnabled;
-}
-
-function shuffleSongs() {
-    for (let i = songs.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [songs[i], songs[j]] = [songs[j], songs[i]];
-    }
 }
 
 function playSong() {
@@ -186,19 +173,16 @@ function updateProgressBar() {
 }
 
 function handleSongEnd() {
-    playlist.removeChild(currentPlayingItem);
-    if (isRepeatEnabled) {
-        playSong();
-    } else if (isShuffleEnabled) {
-        currentSongIndex = Math.floor(Math.random() * songs.length);
-        playSong();
+    if (isShuffleEnabled) {
+        currentSongIndex = Math.floor(Math.random() * songs.length); // Random index for shuffle
+    } else if (isRepeatEnabled) {
+        playSong(); // Replay the same song if repeat is enabled
+        return;
     } else {
-        songs.splice(currentSongIndex, 1);
-        if (songs.length > 0) {
-            currentSongIndex = currentSongIndex % songs.length;
-            playSong();
-        }
+        currentSongIndex = (currentSongIndex + 1) % songs.length; // Go to next song
     }
+
+    playSong(); // Play the next song
 }
 
 function formatTime(seconds) {
