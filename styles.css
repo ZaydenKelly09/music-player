@@ -37,12 +37,12 @@ body.dark-mode {
 
 /* Dark Mode Switcher Background */
 body.dark-mode #mode-switcher {
-    background-color: #444;
+    background-color: #f1f1f1;
 }
 
 /* Light Mode Switcher Background */
 body.light-mode #mode-switcher {
-    background-color: #f1f1f1;
+    background-color: #444;
     color: #333;
 }
 
