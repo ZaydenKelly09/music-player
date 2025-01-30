@@ -71,10 +71,18 @@ function handleFileSelection(event) {
             const songItem = document.createElement("li");
             songItem.textContent = file.name.replace(/\.[^/.]+$/, ""); // Remove file extension
 
+            // Add event listener to play song on click
             songItem.addEventListener("click", () => {
                 currentSongIndex = index;
                 playSong();
             });
+
+            // Add right-click (contextmenu) listener to remove song
+            songItem.addEventListener("contextmenu", (e) => {
+                e.preventDefault(); // Prevent default context menu
+                removeSong(index, songItem); // Call removeSong function to remove the song
+            });
+
             playlist.appendChild(songItem);
         }
     });
@@ -82,6 +90,31 @@ function handleFileSelection(event) {
     if (songs.length > 0) {
         currentSongIndex = 0;
         playSong();
+    }
+}
+
+// Function to remove a song from the playlist
+function removeSong(index, songItem) {
+    // Remove from the songs array
+    songs.splice(index, 1);
+    
+    // Remove the song item from the playlist DOM
+    songItem.remove();
+    
+    // Adjust the currentSongIndex if necessary
+    if (index === currentSongIndex) {
+        // If we are removing the current song, go to the next song
+        if (songs.length > 0) {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            playSong();
+        } else {
+            // If no songs are left, reset everything
+            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+            currentSongIndex = 0;
+        }
+    } else if (index < currentSongIndex) {
+        // If a song before the current song is removed, adjust the index
+        currentSongIndex--;
     }
 }
 
@@ -215,4 +248,9 @@ function handleSearch() {
         noResultsMessage.style.display = "block";
     }
 }
+const muteButton = document.getElementById("mute-btn");
 
+muteButton.addEventListener("click", () => {
+    audio.muted = !audio.muted;
+    muteButton.innerHTML = audio.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+});
