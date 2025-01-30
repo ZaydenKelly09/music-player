@@ -104,6 +104,7 @@ ul {
 }
 
 li {
+    position: relative; /* Set position to relative to allow absolute positioning inside it */
     background-color: #fff;
     margin: 5px;
     padding: 12px;
@@ -119,6 +120,7 @@ li {
 
 li:hover {
     background-color: #6a0dad;
+    transform: scale(1.05); /* Slight scaling on hover */
 }
 
 /* Highlight playing song */
@@ -170,18 +172,18 @@ button.active {
 }
 
 button:not(.active) {
-    background-color: #007BFF;
+    background-color: #89deff;
     box-shadow: none;
 }
 
 button:hover {
     background-color: #0056b3;
     transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
+    
 }
 
 button:focus {
-    outline: none;
+    outline: 2px solid #007BFF; /* Clearer focus indicator */
 }
 
 /* Dark Mode for Buttons */
@@ -192,6 +194,26 @@ body.dark-mode button {
 
 body.dark-mode button:hover {
     background-color: #666;
+}
+
+/* Loop and Shuffle Buttons */
+button#loop-btn, button#shuffle-btn {
+    background-color: #89deff; /* Light mode background */
+    color: white;
+}
+
+button#loop-btn.active, button#shuffle-btn.active {
+    background-color: #a95eff; /* Active background */
+}
+
+/* Dark Mode Loop and Shuffle Buttons */
+body.dark-mode button#loop-btn, body.dark-mode button#shuffle-btn {
+    background-color: #444; /* Dark background */
+    color: white;
+}
+
+body.dark-mode button#loop-btn.active, body.dark-mode button#shuffle-btn.active {
+    background-color: #3b0041; /* Active background for dark mode */
 }
 
 /* Progress Bar */
@@ -271,7 +293,7 @@ body.light-mode #duration-time {
     }
 
     .file-label, button {
-        padding: 4px 9px;
+        padding: 2px 6px;
         font-size: 15px;
     }
 
@@ -281,14 +303,14 @@ body.light-mode #duration-time {
     }
 
     button {
-        width: 43px;
-        height: 43px;
+        width: 32px;
+        height: 32px;
         font-size: 18px;
         padding: 5px;
     }
 
     button i {
-        font-size: 27px;
+        font-size: 17px;
     }
 
     #progress-bar {
@@ -309,24 +331,17 @@ body.light-mode #duration-time {
         margin-bottom: 10px;
         font-size: 14px;
     }
+
+    .instruction {display: none;}
 }
 
-/* Active button states */
-button.active {
-    background-color: #a95eff;
-    box-shadow: 0 0 10px #a95eff;
+.instruction {
+    font-size: 10px;
+    color: #777;
+    text-align: center;
+    margin-top: 1px;
 }
 
-button:not(.active) {
-    background-color: #007BFF;
-    box-shadow: none;
-}
-
-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
-}
-
-* {
-    transition: all 0.3s ease;
+button:focus {
+    outline: none;
 }
