@@ -7,8 +7,9 @@ const loopButton = document.getElementById("loop-btn");
 const shuffleButton = document.getElementById("shuffle-btn");
 const progressBar = document.getElementById("progress-bar");
 const previousButton = document.getElementById("previous-btn");
-const themeToggleButton = document.getElementById("mode-switcher"); // Updated button ID
+const themeToggleButton = document.getElementById("mode-switcher");
 const searchBar = document.getElementById("search-bar");
+const muteButton = document.getElementById("mute-btn");
 
 // Variables for song and player state
 let audio = new Audio();
@@ -17,72 +18,42 @@ let currentSongIndex = 0;
 let songs = [];
 let isShuffleEnabled = false;
 let isRepeatEnabled = false;
-let currentPlayingItem = null;
 
-// Dark/Light mode toggle functionality
-themeToggleButton.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    if (!document.body.classList.contains("dark-mode")) {
-        document.body.classList.add("light-mode");
-    } else {
-        document.body.classList.remove("light-mode");
-    }
-    const icon = themeToggleButton.querySelector("i");
-    icon.classList.toggle("fa-sun");
-    icon.classList.toggle("fa-moon");
-});
-
-// Handle song file selection and playlist display
+// Event listeners for controls
+themeToggleButton.addEventListener("click", toggleTheme);
 fileInput.addEventListener("change", handleFileSelection);
-
-// Play/Pause button functionality
 playPauseButton.addEventListener("click", togglePlayPause);
-
-// Skip button functionality
 skipButton.addEventListener("click", skipSong);
-
-// Previous button functionality
 previousButton.addEventListener("click", previousSong);
-
-// Shuffle button functionality
 shuffleButton.addEventListener("click", toggleShuffle);
-
-// Loop button functionality
 loopButton.addEventListener("click", toggleLoop);
-
-// Event listeners for progress bar and time update
 progressBar.addEventListener("input", updateProgressBar);
 audio.addEventListener("ended", handleSongEnd);
 audio.addEventListener("loadedmetadata", updateDuration);
 audio.addEventListener("timeupdate", updateCurrentTime);
-
-// Search functionality
 searchBar.addEventListener("input", handleSearch);
+muteButton.addEventListener("click", toggleMute);
 
-// Functions for song controls and player actions
+// Dark/Light mode toggle functionality
+function toggleTheme() {
+    document.body.classList.toggle("dark-mode");
+    document.body.classList.toggle("light-mode", !document.body.classList.contains("dark-mode"));
+    const icon = themeToggleButton.querySelector("i");
+    icon.classList.toggle("fa-sun");
+    icon.classList.toggle("fa-moon");
+}
+
+// Handle song file selection and playlist display
 function handleFileSelection(event) {
     const files = event.target.files;
     songs = [];
     playlist.innerHTML = ""; // Clear previous list
+
     Array.from(files).forEach((file, index) => {
         if (file.type.startsWith("audio/")) {
             const songPath = URL.createObjectURL(file);
-            songs.push(songPath);
-            const songItem = document.createElement("li");
-            songItem.textContent = file.name.replace(/\.[^/.]+$/, ""); // Remove file extension
-
-            // Add event listener to play song on click
-            songItem.addEventListener("click", () => {
-                currentSongIndex = index;
-                playSong();
-            });
-
-            // Add right-click (contextmenu) listener to remove song
-            songItem.addEventListener("contextmenu", (e) => {
-                e.preventDefault(); // Prevent default context menu
-                removeSong(index, songItem); // Call removeSong function to remove the song
-            });
-
+            songs.push({ path: songPath, name: file.name.replace(/\.[^/.]+$/, "") });
+            const songItem = createSongItem(index);
             playlist.appendChild(songItem);
         }
     });
@@ -93,31 +64,94 @@ function handleFileSelection(event) {
     }
 }
 
-// Function to remove a song from the playlist
+// Create and return a song item for the playlist
+function createSongItem(index) {
+    const songItem = document.createElement("li");
+    songItem.textContent = songs[index].name;
+    
+    // Event listeners for play and remove
+    songItem.addEventListener("click", () => {
+        currentSongIndex = index;
+        playSong();
+    });
+
+    songItem.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        removeSong(index, songItem);
+    });
+
+    return songItem;
+}
+
+// Remove song from playlist
 function removeSong(index, songItem) {
-    // Remove from the songs array
+    if (index < 0 || index >= songs.length) return;
+
     songs.splice(index, 1);
-    
-    // Remove the song item from the playlist DOM
     songItem.remove();
-    
-    // Adjust the currentSongIndex if necessary
+
+    // Adjust currentSongIndex if needed
     if (index === currentSongIndex) {
-        // If we are removing the current song, go to the next song
         if (songs.length > 0) {
-            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            currentSongIndex = currentSongIndex % songs.length;
             playSong();
         } else {
-            // If no songs are left, reset everything
-            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-            currentSongIndex = 0;
+            resetPlayer();
         }
     } else if (index < currentSongIndex) {
-        // If a song before the current song is removed, adjust the index
         currentSongIndex--;
+    }
+
+    rebuildPlaylist();
+}
+
+// Rebuild the playlist UI
+function rebuildPlaylist() {
+    playlist.innerHTML = "";
+    songs.forEach((song, index) => {
+        const songItem = createSongItem(index);
+        if (index === currentSongIndex) songItem.classList.add("playing");
+        playlist.appendChild(songItem);
+    });
+}
+
+// Reset the player when there are no songs left
+function resetPlayer() {
+    audio.pause();
+    audio.src = "";
+    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+    currentSongIndex = 0;
+    isPlaying = false;
+}
+
+// Modify playSong to handle play logic and UI
+function playSong() {
+    if (songs.length === 0) return resetPlayer();
+
+    const currentSong = songs[currentSongIndex];
+    audio.src = currentSong.path;
+    currentPlayingItem = playlist.children[currentSongIndex];
+
+    updatePlayingState();
+    audio.load();
+    audio.play().catch(error => console.error("Error while trying to play the song: ", error));
+
+    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+    isPlaying = true;
+    updateDuration();
+}
+
+// Update playing state (visuals)
+function updatePlayingState() {
+    const songItems = document.querySelectorAll("#playlist li");
+    songItems.forEach(songItem => songItem.classList.remove("playing"));
+
+    if (currentPlayingItem) {
+        currentPlayingItem.classList.add("playing");
     }
 }
 
+// Toggle play/pause
 function togglePlayPause() {
     if (isPlaying) {
         audio.pause();
@@ -129,15 +163,17 @@ function togglePlayPause() {
     isPlaying = !isPlaying;
 }
 
+// Skip song functionality
 function skipSong() {
     if (isShuffleEnabled) {
-        currentSongIndex = Math.floor(Math.random() * songs.length); // Random index for shuffle
+        currentSongIndex = Math.floor(Math.random() * songs.length);
     } else {
-        currentSongIndex = (currentSongIndex + 1) % songs.length; // Normal skip
+        currentSongIndex = (currentSongIndex + 1) % songs.length;
     }
     playSong();
 }
 
+// Go to the previous song
 function previousSong() {
     currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
     playSong();
@@ -147,51 +183,31 @@ function toggleShuffle() {
     isShuffleEnabled = !isShuffleEnabled;
     shuffleButton.classList.toggle("active", isShuffleEnabled);
 
+    // Only reset the shuffle-related settings, don't affect loop
     if (isShuffleEnabled) {
         isRepeatEnabled = false;
         loopButton.classList.remove("active");
-        audio.loop = false;
+        audio.loop = false; // Ensure loop is disabled when shuffle is enabled
     }
 }
 
 function toggleLoop() {
     isRepeatEnabled = !isRepeatEnabled;
     loopButton.classList.toggle("active", isRepeatEnabled);
+    audio.loop = isRepeatEnabled;
 
+    // Ensure shuffle is disabled if loop is enabled
     if (isRepeatEnabled) {
         isShuffleEnabled = false;
         shuffleButton.classList.remove("active");
     }
-    audio.loop = isRepeatEnabled;
 }
 
-function playSong() {
-    if (songs.length === 0) {
-        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-        return;
-    }
 
-    if (currentPlayingItem) {
-        currentPlayingItem.classList.remove("playing");
-    }
 
-    const currentSong = songs[currentSongIndex];
-    audio.src = currentSong;
-    currentPlayingItem = playlist.children[currentSongIndex];
-
-    if (currentPlayingItem) {
-        currentPlayingItem.classList.add("playing");
-    }
-
-    audio.play();
-    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-    isPlaying = true;
-    updateDuration();
-}
-
+// Update the progress bar
 function updateDuration() {
-    const durationDisplay = document.getElementById("duration-time");
-    durationDisplay.textContent = formatTime(audio.duration);
+    document.getElementById("duration-time").textContent = formatTime(audio.duration);
 }
 
 function updateCurrentTime() {
@@ -200,57 +216,49 @@ function updateCurrentTime() {
     progressBar.value = (audio.currentTime / audio.duration) * 100;
 }
 
+// Sync audio progress with the progress bar
 function updateProgressBar() {
     const seekTime = (progressBar.value / 100) * audio.duration;
     audio.currentTime = seekTime;
 }
 
+// Handle the end of the song
 function handleSongEnd() {
     if (isShuffleEnabled) {
-        currentSongIndex = Math.floor(Math.random() * songs.length); // Random index for shuffle
+        currentSongIndex = Math.floor(Math.random() * songs.length);
     } else if (isRepeatEnabled) {
-        playSong(); // Replay the same song if repeat is enabled
+        playSong();
         return;
     } else {
-        currentSongIndex = (currentSongIndex + 1) % songs.length; // Go to next song
+        currentSongIndex = (currentSongIndex + 1) % songs.length;
     }
 
-    playSong(); // Play the next song
+    playSong();
 }
 
+// Format time (minutes:seconds)
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? '0' + secs : secs}`;
 }
 
+// Search functionality
 function handleSearch() {
     const query = searchBar.value.toLowerCase();
     const songItems = document.querySelectorAll("#playlist li");
-    let found = false;
 
     songItems.forEach(songItem => {
         const songName = songItem.textContent.toLowerCase();
-        if (songName.includes(query)) {
-            songItem.style.display = "block";
-            found = true;
-        } else {
-            songItem.style.display = "none";
-        }
+        songItem.style.display = songName.includes(query) ? "block" : "none";
     });
 
     const noResultsMessage = document.getElementById("no-results-message");
-
-    // Ensure "No results" message is displayed when no matches found
-    if (found) {
-        noResultsMessage.style.display = "none";
-    } else {
-        noResultsMessage.style.display = "block";
-    }
+    noResultsMessage.style.display = [...songItems].some(item => item.style.display === "block") ? "none" : "block";
 }
-const muteButton = document.getElementById("mute-btn");
 
-muteButton.addEventListener("click", () => {
+// Mute button functionality
+function toggleMute() {
     audio.muted = !audio.muted;
     muteButton.innerHTML = audio.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-});
+}
